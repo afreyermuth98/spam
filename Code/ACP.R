@@ -1,10 +1,14 @@
-# Adresse du dossier où vous travaillez
+
+#Change your pwd 
 setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
 
 # Packages utilisés dans la suite
 library(class)
 library(caret)
 library(ROCR)
+library("FactoMineR")
+
+
 
 # Supprimer toutes les variables
 rm(list=ls(all=TRUE))
@@ -13,5 +17,29 @@ rm(list=ls(all=TRUE))
 graphics.off()
 
 # Lecture des données d'apprentissage
-data_train <- read.table("../Data/spam_data_train.rda",header=T,sep="\t");
-print(data_train)
+
+load(file = "../Data/spam_data_train.rda")
+load(file = "../Data/spam_data_test.rda")
+
+mean <- apply(data_train, 2, mean)
+std <- apply(data_train, 2,sd)*sqrt(5/6)
+stat <- rbind(mean, std)
+
+print(stat, digits=4)
+
+# ACP sur données d'origine
+resnorm <- PCA(data_train[-58], graph=FALSE)
+plot(resnorm, choix="ind", ces=1.5, title="")
+plot(resnorm,choix="var", ces=1.5, title="")
+
+# ACP sur données centrées réduites
+resnorm <- PCA(data_train[-58],graph=FALSE)
+plot(resnorm,choix="ind",cex=1.5,title="")
+plot(resnorm,choix="var",cex=1.5,title="")
+
+res$eig
+barplot(res$eig[,1])
+resnorm$eig
+barplot(resnorm$eig[,1])
+res$var
+resnorm$var
