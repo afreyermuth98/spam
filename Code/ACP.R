@@ -1,5 +1,8 @@
 # Adresse du dossier où vous travaillez
-setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
+#Antho
+#setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
+# Clément
+setwd("/Users/luffy/Documents/Cours/ENSEIRB/3ème année/analyse_de_donnees/projet/spam/Code")
 
 # Packages utilisés dans la suite
 library(class)
