@@ -1,6 +1,14 @@
+<<<<<<< HEAD
+# Adresse du dossier où vous travaillez
+#Antho
+#setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
+# Clément
+setwd("/Users/luffy/Documents/Cours/ENSEIRB/3ème année/analyse_de_donnees/projet/spam/Code")
+=======
 
 #Change your pwd 
 setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
+>>>>>>> ad81676d10f43d18067dd2b2a76eac6dbd181c93
 
 # Packages utilisés dans la suite
 library(class)
