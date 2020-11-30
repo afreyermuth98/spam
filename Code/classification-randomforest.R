@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Adresse du dossier où vous travaillez
 #Antho
 setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
