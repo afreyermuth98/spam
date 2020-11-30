@@ -10,8 +10,6 @@ library(caret)
 library(ROCR)
 library("FactoMineR")
 
-
-
 # Supprimer toutes les variables
 rm(list=ls(all=TRUE))
 
@@ -22,3 +20,50 @@ graphics.off()
 
 load(file = "../Data/spam_data_train.rda")
 load(file = "../Data/spam_data_test.rda")
+
+fractionTraining   <- 0.80
+fractionValidation <- 0.20
+
+sampleSizeTraining   <- floor(fractionTraining   * nrow(data_train))
+sampleSizeValidation <- floor(fractionValidation * nrow(data_train))
+
+# Mélange des données (shuffle)
+indicesTraining    <- sort(sample(seq_len(nrow(data_train)), size=sampleSizeTraining))
+indicesNotTraining <- setdiff(seq_len(nrow(data_train)), indicesTraining)
+indicesValidation  <- sort(sample(indicesNotTraining, size=sampleSizeValidation))
+
+dataTraining   <- data_train[indicesTraining, ]
+dataValidation <- data_train[indicesValidation, ]
+
+data_train_x <- dataTraining[c(0:57)]
+data_validate_x <- dataValidation[c(0:57)]
+
+data_train_y <- as.factor(dataTraining$label)
+data_validate_y <- as.factor(dataValidation$label)
+
+rf <- randomForest(x = data_train_x, y = data_train_y, ntree=200)
+
+# Évolution de l'erreur en fonction du nombre d'arbres
+# Ici ntree est fixé à la valeur par défaut = 500
+plot(rf$err.rate[,1], type="l")
+
+# Affichage des résultats
+print(rf)
+
+# Importance des variables
+rf$importance
+varImpPlot(rf)
+
+# Prediction sur les données test
+rf_predict_data_validate <- predict(rf, newdata=data_validate_x)
+
+# Comparaison des valeurs prédites et des valeurs observées
+table(rf_predict_data_validate, dataValidation$label)
+
+# Calcul du taux d'erreur
+error_rate <- mean(rf_predict_data_validate != dataValidation$label)
+cat("error_rate using test data = ",error_rate)
+
+
+#Résultats pour le test :
+rf_predict_data_validate <- predict(rf, newdata=data_test)
