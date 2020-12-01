@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Adresse du dossier où vous travaillez
 #Antho
 #setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
@@ -8,15 +7,13 @@ setwd("/Users/luffy/Documents/Cours/ENSEIRB/3ème année/analyse_de_donnees/projet
 
 #Change your pwd 
 setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
->>>>>>> ad81676d10f43d18067dd2b2a76eac6dbd181c93
 
 # Packages utilisés dans la suite
 library(class)
 library(caret)
 library(ROCR)
 library("FactoMineR")
-
-
+library(PCAmixdata)
 
 # Supprimer toutes les variables
 rm(list=ls(all=TRUE))
@@ -64,17 +61,20 @@ resnorm$var$coord
 
 # Séparation du set de données avec les spamms et pas spamms
 
-#spam <- data_train[data_train$label == 1,]
-#ham <- data_train[data_train$label == 0,]
+spam <- data_train[data_train$label == 1,]
+ham <- data_train[data_train$label == 0,]
 
-#res_spam <- PCA(spam[-58], graph=FALSE)
-#res_ham <- PCA(ham[-58], graph=FALSE)
+res_spam <- PCA(spam[-58], graph=FALSE)
+res_ham <- PCA(ham[-58], graph=FALSE)
 
-#res_spam$eig
-#barplot(res_spam$eig[,1], main="ACP sur les spamms")
-#res_spam$var$contrib
+res_spam$eig
+barplot(res_spam$eig[,1], main="ACP sur les spamms")
+res_spam$var$contrib
 
-#res_ham$eig
-#barplot(res_ham$eig[,1],main="ACP sur les ham")
-#res_ham$var$contrib
+res_ham$eig
+barplot(res_ham$eig[,1],main="ACP sur les ham")
+res_ham$var$contrib
 
+# Test avec PCAmix pour les coefs
+test <- PCAmix(data_train[,1:57])
+test$coef
