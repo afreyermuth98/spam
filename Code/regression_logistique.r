@@ -1,5 +1,12 @@
 # Adresse du dossier où vous travaillez
-setwd("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/TP3/Code")
+
+
+#Adrien
+#setwd("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/TP3/Code")
+#Anthony
+setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
+
+
 # Supprimer toutes les variables
 rm(list=ls(all=TRUE))
 # Supprimer tous les graphiques déjà présents
@@ -7,7 +14,13 @@ graphics.off()
 
 
 # Lecture des données d'apprentissage
-load("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/Data/Data/Projets/spam_data_train.rda");
+#load("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/Data/Data/Projets/spam_data_train.rda");
+#load("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/Data/Data/Projets/spam_data_test.rda");
+
+load(file = "../Data/spam_data_train.rda")
+load(file = "../Data/spam_data_test.rda")
+
+
 data_train_y <- data_train$label
 data_train$label <- as.factor(data_train$label)
 
@@ -40,25 +53,31 @@ data_validate_y <- as.factor(dataValidation$label)
 glm_train <- glm(label~., data = dataTraining, family=binomial())
 
 
-# Lecture des données test
-load("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/Data/Data/Projets/spam_data_test.rda");
-
-
-# Prédiction sur les données de validation
-glm_train_predict <- predict(glm_train, newdata=dataValidation, type="response")
-result_glm_train_predict <- (glm_train_predict > 0.5)+1
+# Prédiction sur les données de train
+glm_train_predict <- predict(glm_train, newdata=data_train_x, type="response")
+result_glm_train_predict <- (glm_train_predict > 0.5)*1
 
 
 # Comparaison des valeurs prédites et des valeurs observées
-table(result_glm_train_predict, dataValidation$label)
+table(result_glm_train_predict, data_train_y)
 # Calcul du taux d'erreur
-glm_error_rate <- mean(result_glm_train_predict != dataValidation$label)
+glm_error_rate <- mean(result_glm_train_predict != data_train_y)
+cat("error rate using train data (Logistic regression) = ", glm_error_rate)
+
+
+#Base de validation
+#Régression logistique
+glm_validation_predict <- predict(glm_train, newdata=data_validate_x, type="response")
+result_glm_validation_predict <- (glm_validation_predict > 0.5)*1
+
+# Comparaison des valeurs prédites et des valeurs observées
+table(result_glm_validation_predict, data_validate_y)
+# Calcul du taux d'erreur
+glm_error_rate <- mean(result_glm_validation_predict != data_validate_y)
 cat("error rate using validation data (Logistic regression) = ", glm_error_rate)
 
 
-#Base de test
-# Régression logistique
+# Prédictions sur les données test :
 glm_test_predict <- predict(glm_train, newdata=data_test, type="response")
-result_glm_test_predict <- (glm_test_predict > 0.5)+1
-
+result_glm_test_predict <- (glm_test_predict > 0.5)*1
 
