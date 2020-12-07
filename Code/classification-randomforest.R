@@ -8,6 +8,7 @@ setwd("F:/Enseirb/AnalyseDeDonnees/spam/Code")
 library(class)
 library(caret)
 library(ROCR)
+library(randomForest)
 library("FactoMineR")
 
 # Supprimer toutes les variables
@@ -43,6 +44,7 @@ data_validate_y <- as.factor(dataValidation$label)
 
 ## TO COMPUTE BEST MTRY
 if(FALSE) {
+  
 library(caret)
 grille.mtry <- data.frame(mtry=seq(1,30,by=1))
 ctrl <- trainControl(method="oob")
@@ -50,14 +52,15 @@ library(doParallel) ## pour paralléliser
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
 set.seed(12345)
-sel.mtry <- train(label~.,data=dataTraining,method="rf",trControl=ctrl,
+sel.mtry <- train(label~.,data=dataTraining,method="rf",
+                  trControl=ctrl,
                   tuneGrid=grille.mtry)
 on.exit(stopCluster(cl))
 sel.mtry
+
 }
 
-
-rf <- randomForest(x = data_train_x, y = data_train_y, ntree=200, mtry=7)
+rf <- randomForest(x = data_train_x, y = data_train_y, ntree=200, mtry=6)
 
 # Évolution de l'erreur en fonction du nombre d'arbres
 # Ici ntree est fixé à la valeur par défaut = 500
@@ -138,8 +141,8 @@ cat("error_rate using test data = ",error_rate)
 }
 
 # Tests base de données après ACP
-if (TRUE) {
-  data_train_reduced <- data.frame(x1=-0.349*data_train[c(1)],x2=-0.162*data_train[c(2)],
+if (FALSE) {
+  data_train_reduced_acp <- data.frame(x1=-0.349*data_train[c(1)],x2=-0.162*data_train[c(2)],
                                    x3=-0.006*data_train[c(3)],x4=-0.094*data_train[c(4)],
                                    x5=-0.003*data_train[c(5)],x6=-0.071*data_train[c(6)],
                                    x7=-0.170*data_train[c(7)],x8=-0.110*data_train[c(8)],
@@ -160,38 +163,36 @@ if (TRUE) {
                                    x37=0.902*data_train[c(37)],x38=0.124*data_train[c(38)],
                                    x39=-0.018*data_train[c(39)],x40=0.072*data_train[c(40)],
                                    x41=0.924*data_train[c(41)],x42=0.007*data_train[c(42)],
-                                   x43=0.032*data_train[c(43)],x44=0.308*data_train[c(46)],
-                                   x45=0.006*data_train[c(45)],x46=0.013*data_train[c(48)],
-                                   x47=-0.009*data_train[c(47)],x48=-0.015*data_train[c(50)],
-                                   x49=0.018*data_train[c(49)],x50=-0.002*data_train[c(52)],
-                                   x51=0.455*data_train[c(51)],x52=0.171*data_train[c(54)],
-                                   x53=-0.042*data_train[c(53)],x54=-0.202*data_train[c(56)],
-                                   x55=0.0001*data_train[c(55)],x56=-0.0003*data_train[c(58)],
-                                   x55=-0.00009*data_train[c(57)],x58=-0.00005*data_train[c(60)],
-                                   
-                                   )
+                                   x43=0.032*data_train[c(43)],x44=0.308*data_train[c(44)],
+                                   x45=0.006*data_train[c(45)],x46=0.013*data_train[c(46)],
+                                   x47=-0.009*data_train[c(47)],x48=-0.015*data_train[c(48)],
+                                   x49=0.018*data_train[c(49)],x50=-0.002*data_train[c(50)],
+                                   x51=0.455*data_train[c(51)],x52=0.171*data_train[c(52)],
+                                   x53=-0.042*data_train[c(53)],x54=-0.202*data_train[c(54)],
+                                   x55=0.0001*data_train[c(55)],x56=-0.0003*data_train[c(56)],
+                                   x55=-0.00009*data_train[c(57)], label=data_train[c(58)])
   
   fractionTraining   <- 0.8
   fractionValidation <- 0.2
   
-  sampleSizeTraining   <- floor(fractionTraining   * nrow(data_train_reduced))
-  sampleSizeValidation <- floor(fractionValidation * nrow(data_train_reduced))
+  sampleSizeTraining   <- floor(fractionTraining   * nrow(data_train_reduced_acp))
+  sampleSizeValidation <- floor(fractionValidation * nrow(data_train_reduced_acp))
   
   # Mélange des données (shuffle)
-  indicesTraining    <- sort(sample(seq_len(nrow(data_train_reduced)), size=sampleSizeTraining))
-  indicesNotTraining <- setdiff(seq_len(nrow(data_train_reduced)), indicesTraining)
+  indicesTraining    <- sort(sample(seq_len(nrow(data_train_reduced_acp)), size=sampleSizeTraining))
+  indicesNotTraining <- setdiff(seq_len(nrow(data_train_reduced_acp)), indicesTraining)
   indicesValidation  <- sort(sample(indicesNotTraining, size=sampleSizeValidation))
   
-  dataTraining   <- data_train_reduced[indicesTraining, ]
-  dataValidation <- data_train_reduced[indicesValidation, ]
+  dataTraining   <- data_train_reduced_acp[indicesTraining, ]
+  dataValidation <- data_train_reduced_acp[indicesValidation, ]
   
-  data_train_x <- dataTraining[c(0:20)]
-  data_validate_x <- dataValidation[c(0:20)]
+  data_train_x <- dataTraining[c(0:57)]
+  data_validate_x <- dataValidation[c(0:57)]
   
   data_train_y <- as.factor(dataTraining$label)
   data_validate_y <- as.factor(dataValidation$label)
   
-  rf <- randomForest(x = data_train_x, y = data_train_y, ntree=100, mtry=7)
+  rf <- randomForest(x = data_train_x, y = data_train_y, ntree=200, n_samples=10)
   
   # Évolution de l'erreur en fonction du nombre d'arbres
   # Ici ntree est fixé à la valeur par défaut = 500
