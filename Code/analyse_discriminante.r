@@ -42,41 +42,57 @@ data_validate_y <- as.factor(dataValidation$label)
 
 
 # Analyse discriminante LINEAIRE
-lin_disc_an <- lda(label~., data = dataTraining)
+lin_disc_an_train <- lda(label~., data = dataTraining)
+
+# Prédiction sur les données de train
+LDA_train_predict <- predict(lin_disc_an_train, newdata=data_train_x, type="class")
+
+# Comparaison des valeurs prédites et des valeurs observées
+table(LDA_train_predict$class, data_train_y)
+# Calcul du taux d'erreur
+lda_error_rate <- mean(LDA_train_predict$class != data_train_y)
+cat("error rate using train data (LDA) = ", lda_error_rate)
 
 
 # Prédiction sur les données de validation
-valid_LDA_predict <- predict(lin_disc_an, newdata=dataValidation, type="class")
+LDA_validation_predict <- predict(lin_disc_an_train, newdata=data_validate_x, type="class")
+# Comparaison des valeurs prédites et des valeurs observées
+table(LDA_validation_predict$class, data_validate_y)
+# Calcul du taux d'erreur
+lda_error_rate <- mean(LDA_validation_predict$class != data_validate_y)
+cat("error rate using train data (LDA) = ", lda_error_rate)
+
+
 
 # Lecture des données test
 load("/Users/adrie/Documents/Scolaire/Enseirb/AnalyseDeDonnees/Data/Data/Projets/spam_data_test.rda");
 
-
-
-# Comparaison des valeurs prédites et des valeurs observées
-confmat = table(valid_LDA_predict$class, dataValidation$label)
-
-# Calcul du taux d'erreur
-lda_error_rate <- mean(valid_LDA_predict$class != dataValidation$label)
-cat("error rate using test data (LDA) = ", lda_error_rate)
-
-# Prédiction sur les données test
-test_LDA_predict <- predict(lin_disc_an, newdata=data_test, type="class")
+# Prédiction sur les données tests
+LDA_test_predict <- predict(lin_disc_an_train, newdata=data_test, type="class")
 
 
 
 # Analyse discriminante QUADRATIQUE
-quad_disc_an <- qda(label~., data = dataTraining)
-# Prédiction sur les données de validation
-valid_QDA_predict <- predict(quad_disc_an, newdata=dataValidation, type="class")
+quad_disc_an_train <- qda(label~., data = dataTraining)
 
+# Prédiction sur les données de train
+QDA_train_predict <- predict(quad_disc_an_train, newdata=data_train_x, type="class")
 
 # Comparaison des valeurs prédites et des valeurs observées
-table(valid_QDA_predict$class, dataValidation$label)
+table(QDA_train_predict$class, data_train_y)
 # Calcul du taux d'erreur
-qda_error_rate <- mean(valid_QDA_predict$class != dataValidation$label)
-cat("error rate using test data (QDA) = ", qda_error_rate)
+Qda_error_rate <- mean(QDA_train_predict$class != data_train_y)
+cat("error rate using train data QLDA) = ", Qda_error_rate)
 
-# Prédiction sur les données test
-test_QDA_predict <- predict(quad_disc_an, newdata=data_test, type="class")
+
+# Prédiction sur les données de validation
+QDA_validation_predict <- predict(quad_disc_an_train, newdata=data_validate_x, type="class")
+# Comparaison des valeurs prédites et des valeurs observées
+table(QDA_validation_predict$class, data_validate_y)
+# Calcul du taux d'erreur
+qda_error_rate <- mean(QDA_validation_predict$class != data_validate_y)
+cat("error rate using train data (QDA) = ", qda_error_rate)
+
+# Prédiction sur les données tests
+QDA_test_predict <- predict(quad_disc_an_train, newdata=data_test, type="class")
 

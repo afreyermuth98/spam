@@ -76,8 +76,12 @@ varImpPlot(rf)
 # Prediction sur les données test
 rf_predict_data_validate <- predict(rf, newdata=data_validate_x)
 
+confusionMatrix(rf_predict_data_validate,data_validate_y)
+
+
 # Comparaison des valeurs prédites et des valeurs observées
 table(rf_predict_data_validate, dataValidation$label)
+
 # Calcul du taux d'erreur
 error_rate <- mean(rf_predict_data_validate != dataValidation$label)
 cat("error_rate using test data = ",error_rate)
@@ -88,7 +92,7 @@ rf_predict_data_test <- predict(rf, newdata=data_test)
 
 ###################################################################
 ###########################EN DESSOUS D'ICI########################
-##############################CA PUE###############################
+##############################C'EST PAS TOP###############################
 ###################################################################
 
 
