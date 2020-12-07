@@ -45,16 +45,47 @@ data_validate_x <- dataValidation[c(0:57)]
 data_train_y <- as.factor(dataTraining$label)
 data_validate_y <- as.factor(dataValidation$label)
 
+#svm <- svm(formula = label~.,
+#           data = dataTraining,
+#           type = 'C-classification',
+#           kernel='linear')
+#pred_test <- predict(svm, newdata=data_train_x)
+
+#error_rate <- mean(pred_test != dataTraining$label)
+#cat("error_rate using test data linear = ",error_rate)
+
+#svm <- svm(formula = label~.,
+#           data = dataTraining,
+#           type = 'C-classification',
+#           kernel='polynomial')
+#pred_test <- predict(svm, newdata=data_train_x)
+
+#error_rate <- mean(pred_test != dataTraining$label)
+#cat("error_rate using test data polynomial = ",error_rate)
+
 svm <- svm(formula = label~.,
            data = dataTraining,
            type = 'C-classification',
-           kernel='linear')
+           kernel='radial',
+           cost = 1,
+           gamma = 0.1)
 pred_test <- predict(svm, newdata=data_train_x)
+confusionMatrix(pred_test,data_train_y)
 
 error_rate <- mean(pred_test != dataTraining$label)
-cat("error_rate using test data = ",error_rate)
+cat("error_rate using test data radial = ",error_rate)
+
+#svm <- svm(formula = label~.,
+#           data = dataTraining,
+#           type = 'C-classification',
+#           kernel='sigmoid')
+#pred_test <- predict(svm, newdata=data_train_x)
+
+#error_rate <- mean(pred_test != dataTraining$label)
+#cat("error_rate using test data sigmoid = ",error_rate)
 
 pred_validate <- predict(svm, newdata=data_validate_x)
+confusionMatrix(pred_validate,data_validate_y)
 
 error_rate <- mean(pred_validate != dataValidation$label)
 cat("error_rate using validate data = ",error_rate)
